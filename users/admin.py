@@ -1,37 +1,48 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import User, Artist, Producer
+from django import forms
+from django.contrib.auth.hashers import make_password
+from .models import Artist, Producer
 
-class CustomUserAdmin(UserAdmin):
-    model = User
-    list_display = ('username', 'email', 'is_active', 'is_staff')  # Supprimé nom, prenom, role
-    list_filter = ('is_active', 'is_staff')  # Supprimé role
+# 🔥 Custom Form for Artist to Show Password Field
+class ArtistAdminForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, required=True)  # 🔥 Show password field
 
-    fieldsets = (
-        (None, {'fields': ('username', 'email', 'password')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'groups', 'user_permissions')}),
-    )
+    class Meta:
+        model = Artist
+        fields = '__all__'  # Show all fields, including password
 
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'is_active', 'is_staff'),
-        }),
-    )
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        return make_password(password)  # 🔐 Hash password before saving
 
-    search_fields = ('email', 'username')
-    ordering = ('email',)
-
-admin.site.register(User, CustomUserAdmin)
 
 class ArtistAdmin(admin.ModelAdmin):
-    list_display = ('email', 'nom', 'prenom', 'talents', 'genres')  # Supprimé role
-    fields = ('email', 'nom', 'prenom', 'profile_picture', 'bio', 'talents', 'genres')
+    form = ArtistAdminForm
+    list_display = ('email', 'nom', 'prenom', 'talents', 'genres')
+    fields = ('email', 'nom', 'prenom', 'password', 'profile_picture', 'bio', 'talents', 'genres')  # 🔥 Added password field
 
 admin.site.register(Artist, ArtistAdmin)
 
+
+#  Custom Form for Producer to Show Password Field
+class ProducerAdminForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, required=True)  # 🔥 Show password field
+
+    class Meta:
+        model = Producer
+        fields = '__all__'
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        return make_password(password)  # 🔐 Hash password before saving
+
+
 class ProducerAdmin(admin.ModelAdmin):
-    list_display = ('email', 'nom', 'prenom', 'studio_name', 'website', 'genres')  # Supprimé role
-    fields = ('email', 'nom', 'prenom', 'profile_picture', 'bio', 'studio_name', 'website', 'genres')
+    form = ProducerAdminForm
+    list_display = ('email', 'nom', 'prenom', 'studio_name', 'website', 'genres')
+    fields = ('email', 'nom', 'prenom', 'password', 'profile_picture', 'bio', 'studio_name', 'website', 'genres')  # 🔥 Added password field
 
 admin.site.register(Producer, ProducerAdmin)
+
+
+ 
