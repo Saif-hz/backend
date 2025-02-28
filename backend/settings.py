@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'rest_framework',
-    'feed',
+    'feed' ,
     'messaging',
+    
+    
 ]
 
 MIDDLEWARE = [
@@ -144,9 +146,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'feed.apps.FeedConfig', 
+    'messaging.apps.MessagingConfig',
     'rest_framework',
-    'rest_framework_simplejwt',  # ✅ Add JWT package
+    'rest_framework_simplejwt',
 ]
+
 
 # 🔥 Add JWT Authentication to Django REST Framework
 REST_FRAMEWORK = {
